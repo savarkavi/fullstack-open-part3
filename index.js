@@ -19,10 +19,13 @@ app.get("/api/persons", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (req, res) => {
+app.get("/info", (req, res, next) => {
   const date = new Date();
-  const totalEntries = data.length;
-  res.send(`<p>Phonebook has ${totalEntries} entries</p> <p>${date}</p>`);
+  Person.find({})
+    .then((result) => {
+      res.send(`<p>Phonebook has ${result.length} entries</p> <p>${date}</p>`);
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/api/persons/:id", (req, res, next) => {
@@ -45,7 +48,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 
   Person.findByIdAndDelete(id)
     .then((result) => {
-      res.status(204).end();
+      res.status(204).json(result);
     })
     .catch((error) => next(error));
 });
